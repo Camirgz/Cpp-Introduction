@@ -1,41 +1,25 @@
 #include <iostream>
-#include <string>
 
-#define MAX_NUMEROS 10
+#define MAX_RASPAS 6
+#define MAX_NUMEROS 5
+#define MAX_LINEA 200
 
-// Función para separar números de una cadena y almacenarlos en un arreglo
-void separarNumeros(const std::string& cadena, int numeros[], int& numNumeros) {
-    numNumeros = 0;
-    std::string temp = "";
-    for (char c : cadena) {
-        if (c == ' ' || c == '|') {
-            if (!temp.empty()) {
-                numeros[numNumeros++] = std::stoi(temp);
-                temp = "";
-            }
-        } else {
-            temp += c;
-        }
-    }
-    if (!temp.empty()) {
-        numeros[numNumeros++] = std::stoi(temp);
-    }
-}
+using namespace std;
 
-// Función para calcular los puntos de una raspadita
-int calcularPuntos(const int ganadores[], int numGanadores, const int nuestros[], int numNuestros) {
+// Función para contar los números ganadores y calcular los puntos
+int calcularPuntos(const int ganadores[], const int nuestros[], int numGanadores, int numNuestros) {
     int puntos = 0;
     bool encontrado[MAX_NUMEROS] = {false};
 
-    // Verificar coincidencias
     for (int i = 0; i < numNuestros; ++i) {
         for (int j = 0; j < numGanadores; ++j) {
             if (nuestros[i] == ganadores[j]) {
                 if (!encontrado[j]) {
+                    puntos += 1;
                     encontrado[j] = true;
-                    puntos = (puntos == 0) ? 1 : puntos * 2;
+                } else {
+                    puntos *= 2;
                 }
-                break;
             }
         }
     }
@@ -43,64 +27,78 @@ int calcularPuntos(const int ganadores[], int numGanadores, const int nuestros[]
     return puntos;
 }
 
-int main() {
+// Función para procesar la entrada y analizar las raspaditas
+void procesarRaspaditas() {
+    const int numRaspas = MAX_RASPAS;
     int ganadores[MAX_NUMEROS];
     int nuestros[MAX_NUMEROS];
     int numGanadores, numNuestros;
-
     int totalPuntos = 0;
+
+    for (int i = 0; i < numRaspas; ++i) {
+        // Leer y procesar la lista de números ganadores
+        cout << "Introduce los números ganadores de la raspa " << (i + 1) << " separados por espacio: ";
+        numGanadores = 0;
+        while (cin >> ganadores[numGanadores] && numGanadores < MAX_NUMEROS) {
+            numGanadores++;
+            if (cin.get() == '\n') break;
+        }
+
+        // Leer y procesar la lista de nuestros números
+        cout << "Introduce tus números para la raspa " << (i + 1) << " separados por espacio: ";
+        numNuestros = 0;
+        while (cin >> nuestros[numNuestros] && numNuestros < MAX_NUMEROS) {
+            numNuestros++;
+            if (cin.get() == '\n') break;
+        }
+
+        // Calcular los puntos
+        int puntos = calcularPuntos(ganadores, nuestros, numGanadores, numNuestros);
+        totalPuntos += puntos;
+
+        // Mostrar resultados
+        cout << "La tarjeta " << (i + 1) << " tiene " << numGanadores << " números ganadores (";
+        for (int j = 0; j < numGanadores; ++j) {
+            cout << ganadores[j];
+            if (j < numGanadores - 1) cout << ", ";
+        }
+        cout << ") y " << numNuestros << " números nuestros (";
+        for (int j = 0; j < numNuestros; ++j) {
+            cout << nuestros[j];
+            if (j < numNuestros - 1) cout << ", ";
+        }
+        cout << "). Por lo que vale " << puntos << " puntos." << endl;
+    }
+
+    // Mostrar el total de puntos
+    cout << "El total de puntos de la pila de raspaditas es: " << totalPuntos << endl;
+}
+
+int main() {
     int opcion;
 
     do {
-        std::cout << "\nMenú:" << std::endl;
-        std::cout << "1. Añadir raspadita" << std::endl;
-        std::cout << "2. Mostrar total de puntos" << std::endl;
-        std::cout << "3. Salir" << std::endl;
-        std::cout << "Selecciona una opción: ";
-        std::cin >> opcion;
-        std::cin.ignore(); // Limpiar el buffer de entrada
+        cout << "\nMenú:" << endl;
+        cout << "1. Introducir raspaditas y calcular puntos" << endl;
+        cout << "2. Salir" << endl;
+        cout << "Selecciona una opción: ";
+        cin >> opcion;
+        cin.ignore(); // Limpiar el buffer de entrada
 
-        if (opcion == 1) {
-            std::string entrada;
-            std::cout << "Introduce los números ganadores y los nuestros separados por una barra vertical (|): ";
-            std::getline(std::cin, entrada);
+        switch (opcion) {
+            case 1:
+                procesarRaspaditas();
+                break;
 
-            // Separar los números en las listas de ganadores y nuestros
-            size_t pos = entrada.find('|');
-            if (pos == std::string::npos) {
-                std::cout << "Formato de entrada incorrecto." << std::endl;
-                continue;
-            }
+            case 2:
+                cout << "Saliendo del programa." << endl;
+                break;
 
-            std::string ganadoresStr = entrada.substr(0, pos);
-            std::string nuestrosStr = entrada.substr(pos + 1);
-
-            separarNumeros(ganadoresStr, ganadores, numGanadores);
-            separarNumeros(nuestrosStr, nuestros, numNuestros);
-
-            int puntos = calcularPuntos(ganadores, numGanadores, nuestros, numNuestros);
-            totalPuntos += puntos;
-
-            std::cout << "\nDetalles de la raspadita:" << std::endl;
-            std::cout << "Números ganadores: ";
-            for (int i = 0; i < numGanadores; ++i) {
-                std::cout << ganadores[i] << " ";
-            }
-            std::cout << std::endl;
-
-            std::cout << "Nuestros números: ";
-            for (int i = 0; i < numNuestros; ++i) {
-                std::cout << nuestros[i] << " ";
-            }
-            std::cout << std::endl;
-
-            std::cout << "Puntos obtenidos: " << puntos << std::endl;
-        } else if (opcion == 2) {
-            std::cout << "El total de puntos es: " << totalPuntos << std::endl;
-        } else if (opcion != 3) {
-            std::cout << "Opción inválida. Por favor, selecciona una opción válida." << std::endl;
+            default:
+                cout << "Opción inválida. Por favor, selecciona una opción válida." << endl;
         }
-    } while (opcion != 3);
+
+    } while (opcion != 2);
 
     return 0;
 }

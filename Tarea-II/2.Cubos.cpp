@@ -2,7 +2,9 @@
 
 #define MAX_JUEGOS 5
 #define MAX_CONJUNTOS 3
-#define MAX_LINEA 200
+#define MAX_CARACTERES 200
+
+using namespace std;
 
 // Función para calcular si el juego es posible dado un conjunto de cubos
 bool esJuegoPosible(int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3], int juegoID, int maxRojos, int maxVerdes, int maxAzules) {
@@ -19,48 +21,51 @@ bool esJuegoPosible(int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3], int juegoID, int m
 }
 
 // Función para analizar y extraer los valores de entrada
-void procesarEntrada(const std::string& entrada, int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3], int& numJuegos) {
+void procesarEntrada(const char* entrada, int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3], int& numJuegos) {
     int conjuntoID = 0;
-    size_t start = 0;
-    size_t end;
+    const char* start = entrada;
 
-    while (conjuntoID < MAX_CONJUNTOS && (end = entrada.find(';', start)) != std::string::npos) {
-        std::string conjunto = entrada.substr(start, end - start);
-        size_t colorStart = 0;
-        size_t colorEnd;
+    while (conjuntoID < MAX_CONJUNTOS && *start != '\0') {
+        int rojos = 0, verdes = 0, azules = 0;
+        int cantidad = 0;
+        bool enCantidad = false;
 
-        while ((colorEnd = conjunto.find(',', colorStart)) != std::string::npos) {
-            std::string colorInfo = conjunto.substr(colorStart, colorEnd - colorStart);
-            size_t spacePos = colorInfo.find(' ');
-            int cantidad = std::stoi(colorInfo.substr(0, spacePos));
-            std::string color = colorInfo.substr(spacePos + 1);
-
-            if (color.find("rojo") != std::string::npos) {
-                juegos[numJuegos][conjuntoID][0] += cantidad;
-            } else if (color.find("verde") != std::string::npos) {
-                juegos[numJuegos][conjuntoID][1] += cantidad;
-            } else if (color.find("azul") != std::string::npos) {
-                juegos[numJuegos][conjuntoID][2] += cantidad;
+        while (*start != '\0' && *start != ';') {
+            if (*start >= '0' && *start <= '9') {
+                if (!enCantidad) {
+                    cantidad = 0;
+                    enCantidad = true;
+                }
+                cantidad = cantidad * 10 + (*start - '0');
+            } else {
+                if (enCantidad) {
+                    enCantidad = false;
+                    if (*start == 'r') {
+                        if (*(start + 1) == 'o' && *(start + 2) == 'j' && *(start + 3) == 'o') {
+                            rojos += cantidad;
+                            start += 4;
+                        }
+                    } else if (*start == 'v') {
+                        if (*(start + 1) == 'e' && *(start + 2) == 'r' && *(start + 3) == 'd' && *(start + 4) == 'e') {
+                            verdes += cantidad;
+                            start += 6;
+                        }
+                    } else if (*start == 'a') {
+                        if (*(start + 1) == 'z' && *(start + 2) == 'u' && *(start + 3) == 'l' && *(start + 4) == 'e') {
+                            azules += cantidad;
+                            start += 5;
+                        }
+                    }
+                }
             }
-
-            colorStart = colorEnd + 1;
+            ++start;
         }
 
-        // Procesar el último color
-        std::string colorInfo = conjunto.substr(colorStart);
-        size_t spacePos = colorInfo.find(' ');
-        int cantidad = std::stoi(colorInfo.substr(0, spacePos));
-        std::string color = colorInfo.substr(spacePos + 1);
+        juegos[numJuegos][conjuntoID][0] = rojos;
+        juegos[numJuegos][conjuntoID][1] = verdes;
+        juegos[numJuegos][conjuntoID][2] = azules;
 
-        if (color.find("rojo") != std::string::npos) {
-            juegos[numJuegos][conjuntoID][0] += cantidad;
-        } else if (color.find("verde") != std::string::npos) {
-            juegos[numJuegos][conjuntoID][1] += cantidad;
-        } else if (color.find("azul") != std::string::npos) {
-            juegos[numJuegos][conjuntoID][2] += cantidad;
-        }
-
-        start = end + 1;
+        if (*start == ';') ++start; // Avanzar el puntero después de ";"
         ++conjuntoID;
     }
 }
@@ -73,31 +78,31 @@ int main() {
     int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3] = {0}; // Inicializar con ceros
     int numJuegos = 0;
     int opcion;
-    std::string entrada;
+    char entrada[MAX_CARACTERES];
 
     do {
-        std::cout << "\nMenú:" << std::endl;
-        std::cout << "1. Añadir juego" << std::endl;
-        std::cout << "2. Mostrar juegos" << std::endl;
-        std::cout << "3. Calcular juegos válidos" << std::endl;
-        std::cout << "4. Salir" << std::endl;
-        std::cout << "Selecciona una opción: ";
-        std::cin >> opcion;
-        std::cin.ignore(); // Limpiar el buffer de entrada
+        cout << "\nMenú:" << endl;
+        cout << "1. Añadir juego" << endl;
+        cout << "2. Mostrar juegos" << endl;
+        cout << "3. Calcular juegos válidos" << endl;
+        cout << "4. Salir" << endl;
+        cout << "Selecciona una opción: ";
+        cin >> opcion;
+        cin.ignore(); // Limpiar el buffer de entrada
 
         switch (opcion) {
             case 1: {
                 // Añadir un nuevo juego
                 if (numJuegos < MAX_JUEGOS) {
-                    std::cout << "Introduce los conjuntos del juego separados por punto y coma. Cada cantidad seguida del color, separados por coma." << std::endl;
-                    std::cout << "Ejemplo: 3 azul, 4 rojo; 1 rojo, 2 verde, 6 azul; 2 verde" << std::endl;
-                    std::cout << "Introduce los datos del juego: ";
-                    std::getline(std::cin, entrada);
+                    cout << "Introduce los conjuntos del juego separados por punto y coma. Cada cantidad seguida del color, separados por coma." << endl;
+                    cout << "Ejemplo: 3 azul, 4 rojo; 1 rojo, 2 verde, 6 azul; 2 verde" << endl;
+                    cout << "Introduce los datos del juego: ";
+                    cin.getline(entrada, MAX_CARACTERES);
 
                     procesarEntrada(entrada, juegos, numJuegos);
                     ++numJuegos;
                 } else {
-                    std::cout << "Límite de juegos alcanzado." << std::endl;
+                    cout << "Límite de juegos alcanzado." << endl;
                 }
                 break;
             }
@@ -105,10 +110,10 @@ int main() {
             case 2: {
                 // Mostrar todos los juegos
                 for (int i = 0; i < numJuegos; ++i) {
-                    std::cout << "Juego " << (i + 1) << ":" << std::endl;
+                    cout << "Juego " << (i + 1) << ":" << endl;
                     for (int j = 0; j < MAX_CONJUNTOS; ++j) {
-                        std::cout << "Conjunto " << (j + 1) << ": ";
-                        std::cout << juegos[i][j][0] << " rojos, " << juegos[i][j][1] << " verdes, " << juegos[i][j][2] << " azules" << std::endl;
+                        cout << "Conjunto " << (j + 1) << ": ";
+                        cout << juegos[i][j][0] << " rojos, " << juegos[i][j][1] << " verdes, " << juegos[i][j][2] << " azules" << endl;
                     }
                 }
                 break;
@@ -124,16 +129,16 @@ int main() {
                     }
                 }
                 
-                std::cout << "La suma de los ID de los juegos posibles es: " << sumaIDPosibles << std::endl;
+                cout << "La suma de los ID de los juegos posibles es: " << sumaIDPosibles << endl;
                 break;
             }
 
             case 4:
-                std::cout << "Saliendo del programa." << std::endl;
+                cout << "Saliendo del programa." << endl;
                 break;
 
             default:
-                std::cout << "Opción inválida. Por favor, selecciona una opción válida." << std::endl;
+                cout << "Opción inválida. Por favor, selecciona una opción válida." << endl;
         }
 
     } while (opcion != 4);

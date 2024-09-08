@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 #define MAX_JUEGOS 5
 #define MAX_CONJUNTOS 3
@@ -6,67 +7,87 @@
 
 using namespace std;
 
+// Función para dividir un string por un delimitador
+void split(const std::string &str, char delimiter, std::string result[], int &size) {
+    size = 0;  // Reiniciamos el tamaño de resultado
+    std::string temp = "";
+    for (char ch : str) {
+        if (ch == delimiter) {
+            if (!temp.empty()) {
+                result[size++] = temp;  // Añadimos la subcadena a resultado
+                temp = "";  // Reiniciamos el temporal
+            }
+        } else {
+            temp += ch;  // Añadimos el caracter a la subcadena temporal
+        }
+    }
+    if (!temp.empty()) {
+        result[size++] = temp;  // Añadimos la última subcadena si existe
+    }
+}
+
 // Función para calcular si el juego es posible dado un conjunto de cubos
 bool esJuegoPosible(int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3], int juegoID, int maxRojos, int maxVerdes, int maxAzules) {
+    int totalRojos = 0, totalVerdes = 0, totalAzules = 0;
+
     for (int i = 0; i < MAX_CONJUNTOS; ++i) {
         int rojos = juegos[juegoID][i][0];
         int verdes = juegos[juegoID][i][1];
         int azules = juegos[juegoID][i][2];
 
-        if (rojos > maxRojos || verdes > maxVerdes || azules > maxAzules) {
-            return false; // Si algún conjunto excede la cantidad, el juego es imposible
+        totalRojos += rojos;
+        totalVerdes += verdes;
+        totalAzules += azules;
+
+        if (totalRojos > maxRojos || totalVerdes > maxVerdes || totalAzules > maxAzules) {
+            return false; // Si las cantidades totales exceden, el juego es imposible
         }
     }
     return true; // Todos los conjuntos son posibles
 }
 
 // Función para analizar y extraer los valores de entrada
-void procesarEntrada(const char* entrada, int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3], int& numJuegos) {
-    int conjuntoID = 0;
-    const char* start = entrada;
+void procesarEntrada(const string &entrada, int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3], int juegoID) {
+    string semicolonSplit[10], commaSplit[10], spaceSplit[10];
+    int semiSize = 0, commaSize = 0, spaceSize = 0;
 
-    while (conjuntoID < MAX_CONJUNTOS && *start != '\0') {
-        int rojos = 0, verdes = 0, azules = 0;
-        int cantidad = 0;
-        bool enCantidad = false;
+    // Dividimos el string por ";"
+    split(entrada, ';', semicolonSplit, semiSize);
 
-        while (*start != '\0' && *start != ';') {
-            if (*start >= '0' && *start <= '9') {
-                if (!enCantidad) {
-                    cantidad = 0;
-                    enCantidad = true;
+    // Procesamos cada bloque separado por ";"
+    for (int i = 0; i < semiSize && i < MAX_CONJUNTOS; i++) {
+        // Dividimos cada bloque por ","
+        split(semicolonSplit[i], ',', commaSplit, commaSize);
+
+        int conjuntoRojos = 0, conjuntoVerdes = 0, conjuntoAzules = 0;
+
+        // Procesamos cada sub-bloque separado por ","
+        for (int j = 0; j < commaSize; j++) {
+            // Dividimos por espacio para separar la cantidad del color
+            split(commaSplit[j], ' ', spaceSplit, spaceSize);
+
+            if (spaceSize == 2) {  // Comprobamos que haya cantidad y color
+                int quantity = std::stoi(spaceSplit[0]);  // Convertimos la cantidad a entero
+                std::string color = spaceSplit[1];
+
+                if (color == "azul" || color == "azules") {
+                    conjuntoAzules += quantity;  // Sumamos la cantidad
+                } else if (color == "rojo" || color == "rojos") {
+                    conjuntoRojos += quantity;
+                } else if (color == "verde" || color == "verdes") {
+                    conjuntoVerdes += quantity;
                 }
-                cantidad = cantidad * 10 + (*start - '0');
             } else {
-                if (enCantidad) {
-                    enCantidad = false;
-                    if (*start == 'r') {
-                        if (*(start + 1) == 'o' && *(start + 2) == 'j' && *(start + 3) == 'o') {
-                            rojos += cantidad;
-                            start += 4;
-                        }
-                    } else if (*start == 'v') {
-                        if (*(start + 1) == 'e' && *(start + 2) == 'r' && *(start + 3) == 'd' && *(start + 4) == 'e') {
-                            verdes += cantidad;
-                            start += 6;
-                        }
-                    } else if (*start == 'a') {
-                        if (*(start + 1) == 'z' && *(start + 2) == 'u' && *(start + 3) == 'l' && *(start + 4) == 'e') {
-                            azules += cantidad;
-                            start += 5;
-                        }
-                    }
-                }
+                // Input inválido si no hay cantidad o color
+                cout << "Formato de entrada inválido." << endl;
+                return;
             }
-            ++start;
         }
 
-        juegos[numJuegos][conjuntoID][0] = rojos;
-        juegos[numJuegos][conjuntoID][1] = verdes;
-        juegos[numJuegos][conjuntoID][2] = azules;
-
-        if (*start == ';') ++start; // Avanzar el puntero después de ";"
-        ++conjuntoID;
+        // Añadimos los valores del conjunto al juego
+        juegos[juegoID][i][0] = conjuntoRojos;
+        juegos[juegoID][i][1] = conjuntoVerdes;
+        juegos[juegoID][i][2] = conjuntoAzules;
     }
 }
 
@@ -101,6 +122,7 @@ int main() {
 
                     procesarEntrada(entrada, juegos, numJuegos);
                     ++numJuegos;
+                    cout << "Juego añadido exitosamente." << endl;
                 } else {
                     cout << "Límite de juegos alcanzado." << endl;
                 }

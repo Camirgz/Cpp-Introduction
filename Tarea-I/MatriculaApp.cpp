@@ -209,7 +209,7 @@ public:
 
 void GUI::MenuPrincipal() {
     while (true) {
-        system("cls");
+        cout << "=======" << endl;;
         cout << "Sistema de Matricula" << endl;
         cout << "1. Cursos" << endl;
         cout << "2. Estudiantes" << endl;
@@ -238,7 +238,7 @@ void GUI::MenuPrincipal() {
 void GUI::MenuCursos() {
     bool continuar = true;
     while (continuar) {
-        system("cls");
+        cout << "=======" << endl;;
         cout << "Sistema de Matricula - Cursos" << endl;
         cout << "1. Ingresar Curso" << endl;
         cout << "2. Mostrar Cursos" << endl;
@@ -273,11 +273,11 @@ void GUI::MenuIngresarCurso() {
 
     bool respuesta = Controlador::IngresarCurso(nombre, creditos, cupos);
     cout << "Resultado del ingreso: " << respuesta << endl;
-    system("pause");
+    cout << "=======" << endl;;
 }
 
 void GUI::MenuMostrarCursos() {
-    system("cls");
+    cout << "=======" << endl;;
     for (int i = 0; i < Controlador::indiceCursos; i++) {
         Curso c = Controlador::cursos[i];
         cout << "Codigo: " << c.codigo;
@@ -285,13 +285,13 @@ void GUI::MenuMostrarCursos() {
         cout << ", creditos: " << c.creditos;
         cout << ", cupos: " << c.cupos << endl;
     }
-    system("pause");
+    cout << "=======" << endl;;
 }
 
 void GUI::MenuEstudiantes() {
     bool seguir = true;
     while (seguir) {
-        system("cls");
+        cout << "=======" << endl;;
         cout << "Sistema de Matricula - Estudiantes" << endl;
         cout << "1. Ingresar Estudiante" << endl;
         cout << "2. Mostrar Estudiantes" << endl;
@@ -327,11 +327,11 @@ void GUI::MenuIngresarEstudiante() {
     bool respuesta = Controlador::IngresarEstudiante(nombre, apellidos, correo);
     
     cout << "Resultado del ingreso: " << respuesta << endl;
-    system("pause");
+    cout << "=======" << endl;;
 }
 
 void GUI::MenuMostrarEstudiantes() {
-    system("cls");
+    cout << "=======" << endl;;
     for (int i = 0; i < Controlador::indiceEstudiantes; i++) {
         Estudiante e = Controlador::estudiantes[i];
         cout << "Carnet: " << e.carnet;
@@ -339,13 +339,13 @@ void GUI::MenuMostrarEstudiantes() {
         cout << ", apellidos: " << e.apellidos;
         cout << ", correo: " << e.correo << endl;
     }
-    system("pause");
+    cout << "=======" << endl;;
 }
 
 void GUI::MenuMatriculas() {
     bool continuar = true;
     while (continuar) {
-        system("cls");
+        cout << "=======" << endl;;
         cout << "Sistema de Matricula - Matriculas" << endl;
         cout << "1. Registrar Estudiante en Curso" << endl;
         cout << "2. Regresar" << endl;
@@ -375,11 +375,11 @@ void GUI::MenuRegistrarEstudianteEnCurso() {
     bool respuesta = Controlador::RegistrarEstudianteEnCurso(codigoCurso, carnet);
 
     cout << "Resultado de la matricula: " << (respuesta ? "Exito" : "Error") << endl;
-    system("pause");
+    cout << "=======" << endl;;
 }
 
 void GUI::MenuReportes() {
-    system("cls");
+    cout << "=======" << endl;;
     Curso cursoMasMatriculado = Controlador::CursoMasMatriculado();
     Estudiante estudianteConMasCreditos = Controlador::EstudianteConMasCreditos();
     
@@ -392,7 +392,7 @@ void GUI::MenuReportes() {
         Curso c = Controlador::cursos[i];
         cout << "Codigo: " << c.codigo << ", Nombre: " << c.nombre << ", Cupos restantes: " << c.cupos << endl;
     }
-    system("pause");
+    cout << "=======" << endl;;
 }
 
 /*************** main ***************/

@@ -1,74 +1,65 @@
 #include <iostream>
+#include <string>
 
-#define MAX_SIZE 10  // Definir un tamaño máximo para la lista
+const int MAX_SIZE = 100; // Definimos un tamaño máximo para el arreglo
 
-using namespace std;
+void transmutarAK(std::string input[], int size) {
+    std::string result[MAX_SIZE] = { " " }; // Arreglo para almacenar el resultado
+    bool transmuted[MAX_SIZE] = { false }; // Marcar celdas transmutadas
+    int index = 0;
 
-// Función para transmutar la lista de caracteres
-void transmutarLista(char lista[], int tamaño) {
-    bool cambiado;
+    for (int i = 0; i < size; ++i) {
+        if (i < size - 1 && input[i] == input[i + 1] && !transmuted[i] && !transmuted[i + 1]) {
+            // Transmutar
+            char nextChar = input[i][0] + 1; // Siguiente letra
+            result[index++] = std::string(1, nextChar);
+            transmuted[i] = true;
+            transmuted[i + 1] = true;
+            i++; // Saltar la siguiente celda que ya fue transmutada
+        } else if (!transmuted[i]) {
+            // Mantener el carácter si no fue transmutado
+            result[index++] = input[i];
+        }
+    }
 
-    do {
-        cambiado = false;
-        for (int i = 0; i < tamaño - 1; ++i) {
-            // Transmutar si dos celdas consecutivas son iguales
-            if (lista[i] != ' ' && lista[i] == lista[i + 1]) {
-                char siguienteLetra = lista[i] + 1;
-                if (siguienteLetra > 'K') {
-                    siguienteLetra = 'A';  // Volver a 'A' si excede 'K'
-                }
-                lista[i] = siguienteLetra;
-                lista[i + 1] = ' '; // Dejar la segunda celda vacía
-                cambiado = true;
-                break;  // Solo se realiza una transmutación por iteración
+    // Reorganizar letras al inicio
+    std::string finalResult[MAX_SIZE] = { " " };
+    for (int i = 0; i < index; ++i) {
+        finalResult[i] = result[i];
+    }
+
+    // Si no hubo transmutación ni reordenamiento, imprimir lista vacía
+    if (index == 0) {
+        std::cout << "Resultado: []" << std::endl;
+        return;
+    }
+
+    // Imprimir el resultado final
+    std::cout << "Resultado: [";
+    for (int i = 0; i < size; ++i) {
+        if (finalResult[i] != " ") {
+            std::cout << finalResult[i];
+            if (i < size - 1) {
+                std::cout << ", ";
             }
         }
-    } while (cambiado);  // Continuar mientras haya transmutaciones
-
-    // Reorganizar la lista para mover todas las letras al principio
-    int j = 0;
-    for (int i = 0; i < tamaño; ++i) {
-        if (lista[i] != ' ' && lista[i] != '\0') {
-            lista[j++] = lista[i];
-        }
     }
-    while (j < tamaño) {
-        lista[j++] = ' ';
-    }
-}
-
-// Función para imprimir la lista
-void imprimirLista(const char lista[], int tamaño) {
-    for (int i = 0; i < tamaño; ++i) {
-        cout << "[" << lista[i] << "] ";
-    }
-    cout << endl;
+    std::cout << "]" << std::endl;
 }
 
 int main() {
-    char lista[MAX_SIZE];
-    int tamaño;
+    std::string input[MAX_SIZE];
+    int size;
 
-    cout << "Introduce el tamaño de la lista (máximo " << MAX_SIZE << "): ";
-    cin >> tamaño;
-    cin.ignore(); // Limpiar el buffer de entrada
+    std::cout << "Ingrese el número de elementos (máximo " << MAX_SIZE << "): ";
+    std::cin >> size;
 
-    if (tamaño > MAX_SIZE) {
-        cout << "El tamaño excede el máximo permitido. Se ajustará a " << MAX_SIZE << "." << endl;
-        tamaño = MAX_SIZE;
+    std::cout << "Ingrese los elementos (letras de 'A' a 'K' o espacios):" << std::endl;
+    for (int i = 0; i < size; ++i) {
+        std::cin >> input[i];
     }
 
-    cout << "Introduce los elementos de la lista (A-K o espacio en blanco): " << endl;
-    for (int i = 0; i < tamaño; ++i) {
-        cin >> lista[i];
-    }
-
-    // Transmutar la lista
-    transmutarLista(lista, tamaño);
-
-    // Imprimir la lista después de la transmutación
-    cout << "Lista después de la transmutación:" << endl;
-    imprimirLista(lista, tamaño);
+    transmutarAK(input, size);
 
     return 0;
 }

@@ -1,104 +1,91 @@
 #include <iostream>
-
-#define MAX_RASPAS 6
-#define MAX_NUMEROS 5
-#define MAX_LINEA 200
+#include <string>
 
 using namespace std;
 
-// Función para contar los números ganadores y calcular los puntos
-int calcularPuntos(const int ganadores[], const int nuestros[], int numGanadores, int numNuestros) {
-    int puntos = 0;
-    bool encontrado[MAX_NUMEROS] = {false};
+const int MAX_NUMS = 100; // Ideal
 
-    for (int i = 0; i < numNuestros; ++i) {
-        for (int j = 0; j < numGanadores; ++j) {
+// Split Java con parámetros, usado tmb en ejercicio 2
+void split(const string &str, char divisor, string final[], int &tamanio) {
+    tamanio = 0;
+    string temp = "";
+    for (char ch : str) {
+        if (ch == divisor) {
+            if (!temp.empty()) {
+                final[tamanio++] = temp;
+                temp = "";
+            }
+        } else {
+            temp += ch;
+        }
+    }
+    if (!temp.empty()) {
+        final[tamanio++] = temp;
+    }
+}
+
+// Función para calcular los puntos de una raspa
+int calcularPuntos(const string ganadores[], int sizeGanadores, const string nuestros[], int sizeNuestros) {
+    int puntos = 0; //Setear en 0 cada vez que se llama el método
+
+    for (int i = 0; i < sizeNuestros; ++i) {//doble ciclo para comparar
+        bool encontrado = false;
+        for (int j = 0; j < sizeGanadores; ++j) {
             if (nuestros[i] == ganadores[j]) {
-                if (!encontrado[j]) {
+                if (!encontrado) {
                     puntos += 1;
-                    encontrado[j] = true;
-                } else {
-                    puntos *= 2;
+                    encontrado = true;
                 }
             }
         }
     }
-
-    return puntos;
-}
-
-// Función para procesar la entrada y analizar las raspaditas
-void procesarRaspaditas() {
-    const int numRaspas = MAX_RASPAS;
-    int ganadores[MAX_NUMEROS];
-    int nuestros[MAX_NUMEROS];
-    int numGanadores, numNuestros;
-    int totalPuntos = 0;
-
-    for (int i = 0; i < numRaspas; ++i) {
-        // Leer y procesar la lista de números ganadores
-        cout << "Introduce los números ganadores de la raspa " << (i + 1) << " separados por espacio: ";
-        numGanadores = 0;
-        while (cin >> ganadores[numGanadores] && numGanadores < MAX_NUMEROS) {
-            numGanadores++;
-            if (cin.get() == '\n') break;
-        }
-
-        // Leer y procesar la lista de nuestros números
-        cout << "Introduce tus números para la raspa " << (i + 1) << " separados por espacio: ";
-        numNuestros = 0;
-        while (cin >> nuestros[numNuestros] && numNuestros < MAX_NUMEROS) {
-            numNuestros++;
-            if (cin.get() == '\n') break;
-        }
-
-        // Calcular los puntos
-        int puntos = calcularPuntos(ganadores, nuestros, numGanadores, numNuestros);
-        totalPuntos += puntos;
-
-        // Mostrar resultados
-        cout << "La tarjeta " << (i + 1) << " tiene " << numGanadores << " números ganadores (";
-        for (int j = 0; j < numGanadores; ++j) {
-            cout << ganadores[j];
-            if (j < numGanadores - 1) cout << ", ";
-        }
-        cout << ") y " << numNuestros << " números nuestros (";
-        for (int j = 0; j < numNuestros; ++j) {
-            cout << nuestros[j];
-            if (j < numNuestros - 1) cout << ", ";
-        }
-        cout << "). Por lo que vale " << puntos << " puntos." << endl;
-    }
-
-    // Mostrar el total de puntos
-    cout << "El total de puntos de la pila de raspaditas es: " << totalPuntos << endl;
+    return puntos*2; //Duplicación
 }
 
 int main() {
-    int opcion;
+    string input;
+    int totalPuntos = 0;
+    int numeroRaspaditas = 1;
+    cout<<"==Bienvenido=="<<endl;
+    while (true) {
+        cout << "Introduce la raspadita(o 'fin' para terminar): ";
+        getline(cin, input); //Entrada
 
-    do {
-        cout << "\nMenú:" << endl;
-        cout << "1. Introducir raspaditas y calcular puntos" << endl;
-        cout << "2. Salir" << endl;
-        cout << "Selecciona una opción: ";
-        cin >> opcion;
-        cin.ignore(); // Limpiar el buffer de entrada
-
-        switch (opcion) {
-            case 1:
-                procesarRaspaditas();
-                break;
-
-            case 2:
-                cout << "Saliendo del programa." << endl;
-                break;
-
-            default:
-                cout << "Opción inválida. Por favor, selecciona una opción válida." << endl;
+        if (input == "fin") {
+            break;
         }
 
-    } while (opcion != 2);
+        // Arrays para almacenar los números ganadores y nuestros números
+        string partes[2];
+        int tamanioPartes; //Variable para usar dentro del método
+        split(input, '|', partes, tamanioPartes);
+
+        if (tamanioPartes != 2) {
+            cout << "==Error: La entrada debe contener exactamente una barra vertical (|)==" << endl;
+            continue;
+        }
+
+        string numerosGanadores[MAX_NUMS];
+        string numerosNuestros[MAX_NUMS];
+        int sizeGanadores, sizeNuestros;//tamaños
+
+        split(partes[0], ' ', numerosGanadores, sizeGanadores);
+        split(partes[1], ' ', numerosNuestros, sizeNuestros);
+
+        // Calcular los puntos para la raspadita
+        int puntos = calcularPuntos(numerosGanadores, sizeGanadores, numerosNuestros, sizeNuestros);
+        totalPuntos += puntos;
+
+        // Mostrar el resultado
+        cout<<"====="<<endl;
+        cout << "La tarjeta " << numeroRaspaditas++ << " tiene " 
+             << sizeGanadores << " números ganadores ("
+             << partes[0] << "), por lo que vale " << puntos << " puntos." << endl;
+        cout<<"===="<<endl;
+    }
+
+    // Mostrar el total de puntos
+    cout << "==Total de puntos: " << totalPuntos <<"=="<< endl;
 
     return 0;
 }

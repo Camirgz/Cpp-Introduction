@@ -2,35 +2,40 @@
 #include <string>
 
 #define MAX_JUEGOS 5
-#define MAX_CONJUNTOS 3
+#define MAX_SUBJUEGOS 3
 #define MAX_CARACTERES 200
 
 using namespace std;
 
-// Función para dividir un string por un delimitador
-void split(const std::string &str, char delimiter, std::string result[], int &size) {
-    size = 0;  // Reiniciamos el tamaño de resultado
-    std::string temp = "";
-    for (char ch : str) {
-        if (ch == delimiter) {
-            if (!temp.empty()) {
-                result[size++] = temp;  // Añadimos la subcadena a resultado
-                temp = "";  // Reiniciamos el temporal
+// Función split inspirada java
+void split(const string &str, char divisor, string final[], int &tamanio) {
+    tamanio = 0;  
+    string temp = ""; 
+    for (char ch : str) { 
+        if (ch == divisor) {
+            if (!temp.empty())  { 
+                final[tamanio++] = temp;  
+                temp = "";  
             }
         } else {
-            temp += ch;  // Añadimos el caracter a la subcadena temporal
+            temp += ch;  
         }
     }
     if (!temp.empty()) {
-        result[size++] = temp;  // Añadimos la última subcadena si existe
+        final[tamanio++] = temp;  // Añadimos la última subcadena si existe
     }
+    /*Recibe una cadena, un divisor y un arreglo de cadenas para almacenar los resultados.
+    Itera sobre cada carácter de la cadena.
+    Si el carácter es el divisor, añade la subcadena acumulada hasta ese punto al arreglo de resultados y reinicia la subcadena.
+    Si el carácter no es el divisor, lo añade a la subcadena actual.
+    Al final, añade la última subcadena al arreglo de resultados si no está vacía*/
 }
 
-// Función para calcular si el juego es posible dado un conjunto de cubos
-bool esJuegoPosible(int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3], int juegoID, int maxRojos, int maxVerdes, int maxAzules) {
-    int totalRojos = 0, totalVerdes = 0, totalAzules = 0;
+// Función para calcular si el juego es posible 
+bool esJuegoPosible(int juegos[MAX_JUEGOS][MAX_SUBJUEGOS][3], int juegoID, int maxRojos, int maxVerdes, int maxAzules) {
+    int totalRojos = 0, totalVerdes = 0, totalAzules = 0; //Vars temporales
 
-    for (int i = 0; i < MAX_CONJUNTOS; ++i) {
+    for (int i = 0; i < MAX_SUBJUEGOS; ++i) {
         int rojos = juegos[juegoID][i][0];
         int verdes = juegos[juegoID][i][1];
         int azules = juegos[juegoID][i][2];
@@ -43,48 +48,51 @@ bool esJuegoPosible(int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3], int juegoID, int m
             return false; // Si las cantidades totales exceden, el juego es imposible
         }
     }
-    return true; // Todos los conjuntos son posibles
+    return true; 
+    // Todos los conjuntos son posibles
 }
 
 // Función para analizar y extraer los valores de entrada
-void procesarEntrada(const string &entrada, int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3], int juegoID) {
-    string semicolonSplit[10], commaSplit[10], spaceSplit[10];
-    int semiSize = 0, commaSize = 0, spaceSize = 0;
+void procesarEntrada(const string &entrada, int juegos[MAX_JUEGOS][MAX_SUBJUEGOS][3], int juegoID) {
+    string puntoycomaSplit[10], comaSplit[10], espacioSplit[10]; //Arreglos para almacenar temporalmente
+    int pycTamanio = 0, comaTamanio = 0, espacioTamanio = 0;
 
-    // Dividimos el string por ";"
-    split(entrada, ';', semicolonSplit, semiSize);
+    // Dividir el string por ";" para subjuegos de cada jugador
+    split(entrada, ';', puntoycomaSplit, pycTamanio);
 
-    // Procesamos cada bloque separado por ";"
-    for (int i = 0; i < semiSize && i < MAX_CONJUNTOS; i++) {
-        // Dividimos cada bloque por ","
-        split(semicolonSplit[i], ',', commaSplit, commaSize);
+    // Procesar subjuego
+    for (int i = 0; i < pycTamanio && i < MAX_SUBJUEGOS; i++) {
 
-        int conjuntoRojos = 0, conjuntoVerdes = 0, conjuntoAzules = 0;
+        // Dividir cada subjuego por ","
+        split(puntoycomaSplit[i] /*subjuego*/, ',', comaSplit, comaTamanio);
 
-        // Procesamos cada sub-bloque separado por ","
-        for (int j = 0; j < commaSize; j++) {
-            // Dividimos por espacio para separar la cantidad del color
-            split(commaSplit[j], ' ', spaceSplit, spaceSize);
+        int conjuntoRojos = 0, conjuntoVerdes = 0, conjuntoAzules = 0; //contadores
 
-            if (spaceSize == 2) {  // Comprobamos que haya cantidad y color
-                int quantity = std::stoi(spaceSplit[0]);  // Convertimos la cantidad a entero
-                std::string color = spaceSplit[1];
+        // Procesar cada subentrada
+        for (int j = 0; j < comaTamanio; j++) {
 
+            // Dividir por espacio para separar la cantidad del color
+            split(comaSplit[j], ' ', espacioSplit, espacioTamanio);
+
+            if (espacioTamanio == 2) {  // Comprobar que haya cantidad y color ("4 azul")
+                int cantidad = stoi(espacioSplit[0]);  // Convertir la cantidad a entero (string to int(stoi))( el primer caracter es el numero)
+                string color = espacioSplit[1];
+
+                //Determinar a quién pertenece la cadena
                 if (color == "azul" || color == "azules") {
-                    conjuntoAzules += quantity;  // Sumamos la cantidad
+                    conjuntoAzules += cantidad;  // Sumar la cantidad respectiva
                 } else if (color == "rojo" || color == "rojos") {
-                    conjuntoRojos += quantity;
+                    conjuntoRojos += cantidad;
                 } else if (color == "verde" || color == "verdes") {
-                    conjuntoVerdes += quantity;
+                    conjuntoVerdes += cantidad;
                 }
             } else {
-                // Input inválido si no hay cantidad o color
-                cout << "Formato de entrada inválido." << endl;
+                cout << "Formato inválido." << endl;
                 return;
             }
         }
 
-        // Añadimos los valores del conjunto al juego
+        // Añadir valores a listas
         juegos[juegoID][i][0] = conjuntoRojos;
         juegos[juegoID][i][1] = conjuntoVerdes;
         juegos[juegoID][i][2] = conjuntoAzules;
@@ -92,15 +100,19 @@ void procesarEntrada(const string &entrada, int juegos[MAX_JUEGOS][MAX_CONJUNTOS
 }
 
 int main() {
-    const int maxRojos = 12;
-    const int maxVerdes = 13;
-    const int maxAzules = 14;
 
-    int juegos[MAX_JUEGOS][MAX_CONJUNTOS][3] = {0}; // Inicializar con ceros
+    //Valores máximos
+    int maxRojos = 12;
+    int maxVerdes = 13;
+    int maxAzules = 14;
+
+    int juegos[MAX_JUEGOS][MAX_SUBJUEGOS][3] = {0}; // Inicializar con ceros (3 = colores)
     int numJuegos = 0;
     int opcion;
     char entrada[MAX_CARACTERES];
-
+    
+    cout << "==Bienvenido al procesador de juegos==" << endl;
+    //Menu
     do {
         cout << "\nMenú:" << endl;
         cout << "1. Añadir juego" << endl;
@@ -109,7 +121,7 @@ int main() {
         cout << "4. Salir" << endl;
         cout << "Selecciona una opción: ";
         cin >> opcion;
-        cin.ignore(); // Limpiar el buffer de entrada
+        cin.ignore(); // Limpiar el buffer de entrada para prevenir que se encicle
 
         switch (opcion) {
             case 1: {
@@ -133,7 +145,7 @@ int main() {
                 // Mostrar todos los juegos
                 for (int i = 0; i < numJuegos; ++i) {
                     cout << "Juego " << (i + 1) << ":" << endl;
-                    for (int j = 0; j < MAX_CONJUNTOS; ++j) {
+                    for (int j = 0; j < MAX_SUBJUEGOS; ++j) {
                         cout << "Conjunto " << (j + 1) << ": ";
                         cout << juegos[i][j][0] << " rojos, " << juegos[i][j][1] << " verdes, " << juegos[i][j][2] << " azules" << endl;
                     }
@@ -160,7 +172,7 @@ int main() {
                 break;
 
             default:
-                cout << "Opción inválida. Por favor, selecciona una opción válida." << endl;
+                cout << "Opción inválida." << endl;
         }
 
     } while (opcion != 4);

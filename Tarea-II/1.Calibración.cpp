@@ -1,31 +1,32 @@
 #include <iostream>
+using namespace std;
 
-#define MAX_LINEAS 100
+#define MAX_entradas 100
 #define LONGITUD_MAX 100
 
-// Función para calcular la calibración de una línea
-int obtenerCalibracion(char* linea) {
+// Función para calcular la calibración de una entrada
+int obtenerCalibracion(char* entrada) {
     char primerDigito = '\0';
-    char ultimoDigito = '\0'; // Especificar que es 0 (número)
+    char ultimoDigito = '\0'; //              '\0' =  final de la cadena
 
     // Encontrar el primer dígito
-    for (int i = 0; linea[i] != '\0'; ++i) {
-        if (linea[i] >= '0' && linea[i] <= '9') {  // Verificar si es un dígito
-            primerDigito = linea[i];
-            break;
+    for (int i = 0; entrada[i] != '\0'; ++i) {
+        if (entrada[i] >= '0' && entrada[i] <= '9') {  // Verificar si es un dígito
+            primerDigito = entrada[i]; 
+            break; //Termina cuando encuentra el primero
         }
     }
 
     // Encontrar el último dígito
-    for (int i = 0; linea[i] != '\0'; ++i) {
-        if (linea[i] >= '0' && linea[i] <= '9') {
-            ultimoDigito = linea[i];
-        }
+    for (int i = 0; entrada[i] != '\0'; ++i) {
+        if (entrada[i] >= '0' && entrada[i] <= '9') {
+            ultimoDigito = entrada[i];
+        } //Va cambiando "el primero" 
     }
 
     // Si se encontraron ambos dígitos, combinar para formar el número de dos dígitos
     if (primerDigito != '\0' && ultimoDigito != '\0') {
-        int numeroCalibrado = (primerDigito - '0') * 10 + (ultimoDigito - '0');
+        int numeroCalibrado = (primerDigito - '0') * 10 + (ultimoDigito - '0'); //Fórmula
         return numeroCalibrado;
     }
 
@@ -33,66 +34,69 @@ int obtenerCalibracion(char* linea) {
 }
 
 int main() {
-    char lineas[MAX_LINEAS][LONGITUD_MAX];
-    int numLineas = 0;
+    char entradas[MAX_entradas][LONGITUD_MAX];
+    int numEntradas = 0;
     int opcion;
     int sumaTotal = 0;
 
-    std::cout << "--- Bienvenido al programa de calibración ---" << std::endl;
+    cout << "--- Bienvenido al programa de calibración ---" << endl;
 
     do {
-        std::cout << "\nMenú:" << std::endl;
-        std::cout << "1. Añadir línea" << std::endl;
-        std::cout << "2. Mostrar líneas" << std::endl;
-        std::cout << "3. Realizar calibraciones" << std::endl;
-        std::cout << "4. Reiniciar líneas" << std::endl;
-        std::cout << "5. Salir" << std::endl;
-        std::cout << "Selecciona una opción: ";
-        std::cin >> opcion;
-        std::cin.ignore(); // Limpiar el buffer de entrada
+        //Menú
+        cout << "\n===Menú:====" << endl;
+        cout << "1. Añadir entrada" << endl;
+        cout << "2. Mostrar entradas" << endl;
+        cout << "3. Realizar calibraciones" << endl;
+        cout << "4. Reiniciar entradas" << endl;
+        cout << "5. Salir" << endl;
+        cout << "==Selecciona una opción:== ";
+        cin >> opcion; //Solo cin porque es solo un caracter el que espera recibir
+        cin.ignore(); // Limpiar el buffer de entrada para evitar que se encicle
+
+        //Manejo entradas menú
 
         switch (opcion) {
             case 1:
-                if (numLineas < MAX_LINEAS) {
-                    std::cout << "Introduce una línea: ";
-                    std::cin.getline(lineas[numLineas], LONGITUD_MAX);
-                    ++numLineas;
+                if (numEntradas < MAX_entradas) {
+                    cout << "Ingrese una entrada: ";
+                    cin.getline(entradas[numEntradas], LONGITUD_MAX);//Get line para varios caracteres
+                    ++numEntradas;
                 } else {
-                    std::cout << "Límite de líneas alcanzado." << std::endl;
+                    cout << "Supera el límite de entradas." << endl;
                 }
                 break;
 
             case 2:
-                std::cout << "Líneas almacenadas:" << std::endl;
-                for (int i = 0; i < numLineas; ++i) {
-                    std::cout << i + 1 << ". " << lineas[i] << std::endl;
+                cout << "Entradas almacenadas:" << endl;
+                for (int i = 0; i < numEntradas; ++i) {
+                    cout << i + 1 << ". " << entradas[i] << endl;
                 }
                 break;
             
             case 3:
                 sumaTotal = 0; // Reiniciar suma total para nuevas calibraciones
-                for (int i = 0; i < numLineas; ++i) {
-                    int calibracion = obtenerCalibracion(lineas[i]);
-                    std::cout << "Calibración para la línea '" << lineas[i] << "': " << calibracion << std::endl;
+                for (int i = 0; i < numEntradas; ++i) {
+                    int calibracion = obtenerCalibracion(entradas[i]);
+                    cout << "Calibración para la entrada '" << entradas[i] << "': " << calibracion << endl;
                     sumaTotal += calibracion;
                 }
-                std::cout << "Suma total de valores de calibración: " << sumaTotal << std::endl;
+                cout << "Suma total de valores de calibración: " << sumaTotal << endl;
                 break;
 
             case 4:
-                numLineas = 0; // Reiniciar el contador de líneas
-                std::cout << "Las líneas han sido reiniciadas." << std::endl;
+                numEntradas = 0; // Reiniciar el contador de entradas
+                cout << "Las entradas han sido reiniciadas." << endl;
                 break;
 
             case 5:
-                std::cout << "--- Gracias! ---" << std::endl;
+                cout << "=== Gracias! ===" << endl;
                 break;
 
             default:
-                std::cout << "Opción inválida. Por favor, selecciona una opción válida." << std::endl;
+                cout << "Opción inválida." << endl;
         }
 
-    } while (opcion != 5);
+    } while (opcion != 5); //Fin do-while
 
     return 0;
 }

@@ -3,45 +3,44 @@
 
 using namespace std;
 
-const int MAX_SIZE = 100; // Definimos un tamaño máximo para el arreglo
+const int TAM_MAXIMO = 100; // ideal
 
-void transmutarAK(string input[], int size) {
-    string result[MAX_SIZE] = { " " }; // Arreglo para almacenar el resultado
-    bool transmuted[MAX_SIZE] = { false }; // Marcar celdas transmutadas
-    int index = 0;
+void transmutar_ak(string entrada[], int tamano) {
+    string resultado[TAM_MAXIMO] = { " " }; 
+    bool transmutado[TAM_MAXIMO] = { false }; // Marcar celdas transmutadas
+    int indice = 0;
 
-    for (int i = 0; i < size; ++i) {
-        if (i < size - 1 && input[i] == input[i + 1] && !transmuted[i] && !transmuted[i + 1]) {
+    for (int i = 0; i < tamano; ++i) {
+        if (i < tamano - 1 && entrada[i] == entrada[i + 1] && !transmutado[i] && !transmutado[i + 1]) {
             // Transmutar
-            char nextChar = input[i][0] + 1; // Siguiente letra
-            result[index++] = string(1, nextChar);
-            transmuted[i] = true;
-            transmuted[i + 1] = true;
-            i++; // Saltar la siguiente celda que ya fue transmutada
-        } else if (!transmuted[i]) {
-            // Mantener el carácter si no fue transmutado
-            result[index++] = input[i];
+            char siguiente_letra = entrada[i][0] + 1; // Siguiente letra
+            resultado[indice++] = string(1, siguiente_letra);
+            transmutado[i] = true;
+            transmutado[i + 1] = true;
+            i++; 
+        } else if (!transmutado[i]) {
+            resultado[indice++] = entrada[i];
         }
     }
 
     // Reorganizar letras al inicio
-    string finalResult[MAX_SIZE] = { " " };
-    for (int i = 0; i < index; ++i) {
-        finalResult[i] = result[i];
+    string resultado_final[TAM_MAXIMO] = { " " };
+    for (int i = 0; i < indice; ++i) {
+        resultado_final[i] = resultado[i];
     }
 
-    // Si no hubo transmutación ni reordenamiento, imprimir lista vacía
-    if (index == 0) {
-        cout << "Resultado: []" << endl;
+    // Imprimir lista vacía
+    if (indice == 0) {
+        cout << "resultado: []" << endl;
         return;
     }
 
-    // Imprimir el resultado final
-    cout << "Resultado: [";
-    for (int i = 0; i < size; ++i) {
-        if (finalResult[i] != " ") {
-            cout << finalResult[i];
-            if (i < size - 1) {
+    // Resultado final
+    cout << "resultado: [";
+    for (int i = 0; i < tamano; ++i) {
+        if (resultado_final[i] != " ") {
+            cout << resultado_final[i];
+            if (i < tamano - 1) {
                 cout << ", ";
             }
         }
@@ -50,18 +49,18 @@ void transmutarAK(string input[], int size) {
 }
 
 int main() {
-    string input[MAX_SIZE];
-    int size;
+    string entrada[TAM_MAXIMO];
+    int tamano;
 
-    cout << "Ingrese el número de elementos (máximo " << MAX_SIZE << "): ";
-    cin >> size;
+    cout << "Ingrese el número de elementos (máximo " << TAM_MAXIMO << "): ";
+    cin >> tamano;
 
-    cout << "Ingrese los elementos (letras de 'A' a 'K' o espacios):" << endl;
-    for (int i = 0; i < size; ++i) {
-        cin >> input[i];
+    cout << "Ingrese los elementos (letras de 'a' a 'k' o espacios):" << endl;
+    for (int i = 0; i < tamano; ++i) {
+        cin >> entrada[i];
     }
 
-    transmutarAK(input, size);
+    transmutar_ak(entrada, tamano);
 
     return 0;
 }

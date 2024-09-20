@@ -1,14 +1,6 @@
-// main.cpp
-#include "Registro.h"
-#include "ListaRegistros.cpp"
 #include <iostream>
-
-int main() {
-    std::ListaRegistros lista;
-    lista.leerArchivoCSV("Personas.csv");  // Ruta del archivo CSV
-
-    // Imprimir la lista completa
-    lista.imprimirLista();
-
+using namespace std;
+int main(){
+    cout<<"Hello World!"<<endl;
     return 0;
-}
+};

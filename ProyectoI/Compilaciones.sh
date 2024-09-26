@@ -1,2 +1,2 @@
-g++ -o prueba main.cpp lista_registros.cpp
+g++ -o prueba Main.cpp ListaRegistros.cpp
 ./prueba

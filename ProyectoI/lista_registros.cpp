@@ -35,15 +35,16 @@ namespace std {
                         numColumnas++;
                     }
                     esPrimeraLinea = false;
-                    continue;
+                    
+                    // Resetear el stream para procesar la primera línea de nuevo
+                    ss.clear(); 
+                    ss.str(linea); 
                 }
 
                 // Crear un nuevo objeto Registro con el número de columnas
                 Registro* nuevoRegistro = new Registro(numColumnas);
 
-                // Volver a procesar la línea para asignar los valores
-                ss.clear();
-                ss.str(linea);
+                // Asignar los valores de la línea actual al nuevo registro
                 for (int i = 0; i < numColumnas; ++i) {
                     getline(ss, nuevoRegistro->valores[i], ',');
                 }
@@ -57,16 +58,43 @@ namespace std {
                 actual = nuevoRegistro; // Actualizar el puntero actual
             }
 
+
             archivo.close();
         }
 
         // Método para imprimir toda la lista de registros
-        void imprimirLista() const {
-            Registro* actual = cabeza;
-            while (actual != nullptr) {
-                actual->imprimir();
-                actual = actual->siguiente; // Pasar al siguiente nodo
+        void imprimirLista(int numcolumnas, string* columnas) const {
+
+            // imprimir las columnas seleccionadas
+            for (int i = 0; i < numcolumnas; ++i) {
+                // imprimir el nombre de la columna
+                std::cout << columnas[i] << "\n" << endl;
+
+                Registro* actual = cabeza;
+
+                // Encontrar la columna seleccionada en la primera linea
+                int contador = 0;
+                for (int j = 0; j < numcolumnas; ++j) {
+                    // si el valor de la columna no es igual a la columna seleccionada se aumenta el contador
+                    if (actual->valores[j] != columnas[i] ) {
+                        contador++;
+                    } else {
+                        break;
+                    }
+                }
+                // saltarse la primera linea
+                actual = actual->siguiente;
+                
+                // Imprimir los registros uno por uno usando el contador para saber que columna imprimir
+                while (actual != nullptr) {
+                    actual->imprimir2(contador);
+                    actual = actual->siguiente;
+                   
+                }
+                std::cout <<  std::endl;
             }
+            std::cout << std::endl;
+           
         }
     };
 }

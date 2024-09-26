@@ -32,6 +32,17 @@ namespace std {
             }
             std::cout << std::endl;
         }
+        void imprimir2(int columna) const {
+            bool hola = true;
+            for (int i = 0; i < numColumnas and hola; ++i) {
+                // if valores[i] == columna(id)
+                if ( i == columna) {
+                    std::cout << valores[i] <<endl;
+                    hola = false;
+                }
+                
+            }
+        }
     };
 }
 

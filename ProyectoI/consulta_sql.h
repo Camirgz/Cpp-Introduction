@@ -40,32 +40,33 @@ namespace std {
 
                 // Extraer las columnas separadas por comas
                 while ((end = columnasStr.find(", ", start)) != string::npos) {
-                    columnas[numColumnas++] = columnasStr.substr(start, end - start);
+                    columnas[numColumnas] = columnasStr.substr(start, end - start);
+                    numColumnas++;
                     start = end + 2;  // Avanzar después de la coma y el espacio
                 }
                 // Última columna (o única columna si no hay comas)
                 columnas[numColumnas++] = columnasStr.substr(start);
+                std::cout << "\nnumero de columnas: "<< numColumnas << std::endl;
+                
             }
 
             // Extraer el nombre del archivo después de FROM
             archivo = consulta.substr(posFrom + 6); // 6 caracteres de " FROM "
         }
 
-        // Método para imprimir los detalles de la consulta
-        void imprimirConsulta() const {
-            cout << "Archivo: " << archivo << endl;
+        
+        bool consulta()  {
+            std::cout << "Archivo: " << archivo << std::endl;
             if (seleccionarTodas) {
-                cout << "Columnas: Todas (*)" << endl;
+               std::cout << "Columnas: Todas (*)" << std::endl;
             } else {
-                cout << "Columnas seleccionadas: ";
+                std::cout << "Columnas seleccionadas: ";
                 for (int i = 0; i < numColumnas; ++i) {
-                    cout << columnas[i];
-                    if (i < numColumnas - 1) {
-                        cout << ", ";
-                    }
+                    std::cout << columnas[i] << " ";
                 }
-                cout << endl;
+                std::cout << "\n" << std::endl;
             }
+            return true;
         }
     };
 }

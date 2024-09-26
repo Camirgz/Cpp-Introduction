@@ -8,7 +8,7 @@ using namespace std;
 
 class ConsultaSQL {
 public:
-    string archivo;            // Nombre del archivo extraído de la consulta
+    string archivo;            // Nombre del archivo extraído de la consulta (con la ruta completa)
     string columnas[10];       // Arreglo para almacenar hasta 10 columnas
     int numColumnas;           // Número de columnas seleccionadas
     bool seleccionarTodas;     // Bandera para indicar si se seleccionan todas las columnas
@@ -18,6 +18,7 @@ public:
 
     // Método para procesar la consulta SQL
     void procesarConsulta(const string& consulta) {
+        
         // Variables de apoyo
         size_t posSelect = consulta.find("SELECT ");
         size_t posFrom = consulta.find(" FROM ");
@@ -50,7 +51,10 @@ public:
         }
 
         // Extraer el nombre del archivo después de FROM
-        archivo = consulta.substr(posFrom + 6); // 6 caracteres de " FROM "
+        string archivoStr = consulta.substr(posFrom + 6); // 6 caracteres de " FROM "
+
+        // Añadir la ruta de ../db/ al nombre del archivo
+        archivo = "../db/" + archivoStr;
     }
 
     bool consulta()  {

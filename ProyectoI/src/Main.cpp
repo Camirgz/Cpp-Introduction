@@ -1,5 +1,5 @@
 // main.cpp
-#include "ConsultaSQL.h"
+#include "../include/ConsultaSQL.h"
 #include "ListaRegistros.cpp"
 #include <iostream>
 

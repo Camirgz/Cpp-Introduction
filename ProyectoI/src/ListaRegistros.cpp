@@ -72,43 +72,53 @@ public:
     }
 
     // Método para imprimir toda la lista de registros
-    void imprimirLista(int numcolumnas, string *columnas) const
+    void imprimirLista(int numcolumnas, string *columnas, bool imprimirTodas) const
     {
-
-        // imprimir las columnas seleccionadas
-        for (int i = 0; i < numcolumnas; ++i)
-        {
-            // imprimir el nombre de la columna
-            cout << columnas[i] << "\n"
-                 << endl;
-
+        if(imprimirTodas){
             Registro *actual = cabeza;
-
-            // Encontrar la columna seleccionada en la primera linea
-            int contador = 0;
-            for (int j = 0; j < numcolumnas; ++j)
-            {
-                // si el valor de la columna no es igual a la columna seleccionada se aumenta el contador
-                if (actual->valores[j] != columnas[i])
-                {
-                    contador++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            // saltarse la primera linea
-            actual = actual->siguiente;
-
-            // Imprimir los registros uno por uno usando el contador para saber que columna imprimir
             while (actual != nullptr)
             {
-                actual->imprimir2(contador);
+                actual->imprimir();
                 actual = actual->siguiente;
+            }
+
+        } else {
+
+            // imprimir las columnas seleccionadas
+            for (int i = 0; i < numcolumnas; ++i)
+            {
+                // imprimir el nombre de la columna
+                cout << columnas[i] << "\n"
+                    << endl;
+
+                Registro *actual = cabeza;
+
+                // Encontrar la columna seleccionada en la primera linea
+                int contador = 0;
+                for (int j = 0; j < numcolumnas; ++j)
+                {
+                    // si el valor de la columna no es igual a la columna seleccionada se aumenta el contador
+                    if (actual->valores[j] != columnas[i])
+                    {
+                        contador++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                // saltarse la primera linea
+                actual = actual->siguiente;
+
+                // Imprimir los registros uno por uno usando el contador para saber que columna imprimir
+                while (actual != nullptr)
+                {
+                    actual->imprimir2(contador);
+                    actual = actual->siguiente;
+                }
+                cout << endl;
             }
             cout << endl;
         }
-        cout << endl;
     }
 };

@@ -18,6 +18,8 @@ void ConsultaSQL :: procesarConsulta(const string& consulta) {
     // Extraer las columnas entre SELECT y FROM
     string columnasStr = consulta.substr(posSelect + 7, posFrom - (posSelect + 7));
 
+    
+
     if (columnasStr == "*") {
         seleccionarTodas = true;
     } else {

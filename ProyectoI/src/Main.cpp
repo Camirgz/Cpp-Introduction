@@ -24,7 +24,7 @@ int main() {
 
     // Imprimir los registros según la consulta
     cout << "Resultado de la consulta:\n" << endl;
-    lista.imprimirLista(consulta.numColumnas, consulta.columnas);
+    lista.imprimirLista(consulta.numColumnas, consulta.columnas, consulta.seleccionarTodas);
 
     cout << "===Gracias===" <<endl; 
 

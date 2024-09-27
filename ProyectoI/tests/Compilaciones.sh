@@ -10,7 +10,7 @@ DB_DIR="../db"
 EXECUTABLE="ProyectoEjecutable"
 
 # Compilación
-g++ -I$INCLUDE_DIR $SRC_DIR/Main.cpp $SRC_DIR/ListaRegistros.cpp -o $BIN_DIR/$EXECUTABLE
+g++ -I$INCLUDE_DIR $SRC_DIR/Main.cpp $SRC_DIR/ListaRegistros.cpp $SRC_DIR/ConsultaSQL.cpp -o $BIN_DIR/$EXECUTABLE
 
 # Verificación de la compilación
 if [ $? -eq 0 ]; then
@@ -19,7 +19,7 @@ if [ $? -eq 0 ]; then
     # Ejecutar el programa
     echo "Ejecutando $EXECUTABLE..."
     echo ""
-    $BIN_DIR/$EXECUTABLE
+    $BIN_DIR/$EXECUTABLE 
     
 else
     echo "Error en la compilación."

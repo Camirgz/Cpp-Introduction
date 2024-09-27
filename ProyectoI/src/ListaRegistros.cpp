@@ -1,4 +1,3 @@
-// lista_registros.cpp
 #include "Registro.h"
 #include <fstream>
 #include <sstream>

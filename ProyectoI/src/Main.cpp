@@ -1,4 +1,3 @@
-// main.cpp
 #include "../include/ConsultaSQL.h"
 #include "ListaRegistros.cpp"
 #include <iostream>

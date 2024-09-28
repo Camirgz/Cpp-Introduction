@@ -28,10 +28,9 @@ void ConsultaSQL::procesarConsulta(const string& consulta) {
 
     // Añadir la ruta de ../db/ al nombre del archivo
     archivo = "../db/" + archivoStr;
-    cout << "\nArchivo: " << archivo << endl;
-    lista.leerArchivoCSV(archivo);
-    cout << "Abrí el archivoooo: ";
 
+    lista.leerArchivoCSV(archivo);
+    
     if (posDistinct != string::npos) {
         columnasStr = consulta.substr(posSelect + 16, posFrom - (posSelect + 16));    
         procesarDistinct(columnasStr);  // Llamar al método para manejar DISTINCT
@@ -39,6 +38,7 @@ void ConsultaSQL::procesarConsulta(const string& consulta) {
     }  
     else if (posMin != string::npos) {
          columnasStr = consulta.substr(posSelect + 10, posFrom - (posSelect + 10));    
+
     } else if (posMax != string::npos) {
          columnasStr = consulta.substr(posSelect + 10, posFrom - (posSelect + 10));    
     } else if (posCount != string::npos) {
@@ -47,13 +47,15 @@ void ConsultaSQL::procesarConsulta(const string& consulta) {
          columnasStr = consulta.substr(posSelect + 10, posFrom - (posSelect + 10));    
     } else if (posAvg != string::npos) {
          columnasStr  = consulta.substr(posSelect + 10, posFrom - (posSelect + 10));    
-    }
+    } 
+
 
     // Extraer las columnas entre SELECT y FROM
     columnasStr = consulta.substr(posSelect + 7, posFrom - (posSelect + 7));
 
     if (columnasStr == "*") {
         seleccionarTodas = true;
+        numColumnas = 0; // No necesitamos contar las columnas si seleccionamos todas
     } else {
         seleccionarTodas = false;
         size_t start = 0;
@@ -63,9 +65,16 @@ void ConsultaSQL::procesarConsulta(const string& consulta) {
         // Extraer las columnas individuales
         while ((end = columnasStr.find(",", start)) != string::npos) {
             columnas[numColumnas++] = columnasStr.substr(start, end - start);
-            start = end + 2;  // Avanzar al siguiente carácter después de la coma
+            start = end + 1;  // Avanzar al siguiente carácter después de la coma
         }
+        columnas[numColumnas++] = columnasStr.substr(start); // Para la última columna
     }
+    
+    cout << "columnasStr: " << columnasStr << " num columnas " << numColumnas << endl;
+    for (int i = 0; i < numColumnas; ++i) {
+        cout << "columnas[" << i << "]: " << columnas[i] << endl;
+    }
+    lista.imprimirLista(numColumnas, columnas, seleccionarTodas);
 }
 
 void ConsultaSQL::procesarDistinct(const std::string& columnasStr) {

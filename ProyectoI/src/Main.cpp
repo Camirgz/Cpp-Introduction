@@ -16,16 +16,13 @@ int main()
     // Procesar la consulta
     consulta.procesarConsulta(entradaConsulta);
 
-    consulta.consulta();
+   
 
     // Crear la lista de registros y leer el archivo
-    ListaRegistros lista;
-    lista.leerArchivoCSV(consulta.archivo);
+    
 
     // Imprimir los registros según la consulta
-    cout << "Resultado de la consulta:\n"
-         << endl;
-    lista.imprimirLista(consulta.numColumnas, consulta.columnas, consulta.seleccionarTodas);
+ 
 
     cout << "===Gracias===" << endl;
 
